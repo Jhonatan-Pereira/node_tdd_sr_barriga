@@ -2,13 +2,9 @@ const app = require('express')();
 const consign = require('consign')
 const knex = require('knex')
 const knexfile = require('../knexfile')
-const knexLogger = require('knex-logger')
 
 // TODO: criar chaveamento dinâmico
 app.db = knex(knexfile.test)
-
-// DEBUG: log das consultas sql
-// app.use(knexLogger(app.db))
 
 consign({ cwd: 'src', verbose: false })
   .include('./config/middlewares.js')
@@ -19,6 +15,10 @@ consign({ cwd: 'src', verbose: false })
 
 app.get('/', (req, res) => {
   res.status(200).send()
+})
+
+app.use((req, res) => {
+  res.status(404).send('Não conheço essa requisição')
 })
 
 // DEBUG: log das consultas sql
