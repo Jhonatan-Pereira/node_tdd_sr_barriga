@@ -17,8 +17,11 @@ app.get('/', (req, res) => {
   res.status(200).send()
 })
 
-app.use((req, res) => {
-  res.status(404).send('Não conheço essa requisição')
+app.use((err, req, res, next) => {
+  const { name, message, stack } = err
+  if(name === 'ValidatorError') res.status(400).json({ error: message })
+  else res.status(500).json({ name, message, stack })
+  next(err)
 })
 
 // DEBUG: log das consultas sql
