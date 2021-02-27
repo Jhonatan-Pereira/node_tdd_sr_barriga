@@ -14,3 +14,25 @@ test('Deve receber token ao logar', () => {
         })
     })
 })
+
+test('Não deve autenticar usuário com senha errada', () => {
+  const mail = `${Date.now()}@gmail.com`
+  return app.services.user.save({name: 'Walter', mail, passwd: '12345' })
+    .then(() => {
+      request(app).post('/auth/signin')
+        .send({ mail, passwd: '654321' })
+        .then((res) => {
+          expect(res.status).toBe(400)
+          expect(res.body.error).toBe('Usuário ou senha inválido')
+        })
+    })
+})
+
+test('Não deve autenticar usuário com email errado', () => {
+  return request(app).post('/auth/signin')
+    .send({ mail: 'naoexiste@gmail.com', passwd: '654321' })
+    .then((res) => {
+      expect(res.status).toBe(400)
+      expect(res.body.error).toBe('Usuário ou senha inválido')
+    })
+})
