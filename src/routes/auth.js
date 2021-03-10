@@ -1,11 +1,15 @@
-const jwt = require('jwt-simple')
-const bcrypt = require('bcrypt-nodejs')
-const validationError = require('../errors/ValidatorError')
+const express = require('express');
+const jwt = require('jwt-simple');
+const bcrypt = require('bcrypt-nodejs');
+const validationError = require('../errors/ValidatorError');
 
 const secret = 'Segredo!'
 
 module.exports = (app) => {
-  const signin = (req, res, next) => {
+
+  const router = express.Router()
+
+  router.post('/signin', (req, res, next) => {
     app.services.user.findOne({ mail: req.body.mail })
       .then((user) => {
         if(!user) throw new validationError('Usuário ou senha inválido')
@@ -19,7 +23,16 @@ module.exports = (app) => {
           res.status(200).json({ token })
         } else throw new validationError('Usuário ou senha inválido')
       }).catch(err => next(err))
-  }
+  })
 
-  return { signin }
+  router.post('/signup', async (req, res, next) => {
+    try {
+      const result = await app.services.user.save(req.body)
+      return res.status(201).json(result[0])
+    } catch (err) {
+      return next(err)
+    }
+  })
+
+  return router
 }
