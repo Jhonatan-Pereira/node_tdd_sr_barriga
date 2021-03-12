@@ -1,0 +1,48 @@
+{
+	// Place your srbarriga workspace snippets here. Each snippet is defined under a snippet name and has a scope, prefix, body and 
+	// description. Add comma separated ids of the languages where the snippet is applicable in the scope field. If scope 
+	// is left empty or omitted, the snippet gets applied to all languages. The prefix is what is 
+	// used to trigger the snippet and the body will be expanded and inserted. Possible variables are: 
+	// $1, $2 for tab stops, $0 for the final cursor position, and ${1:label}, ${2:another} for placeholders. 
+	// Placeholders with the same ids are connected.
+	// Example:
+	// "Print to console": {
+	// 	"scope": "javascript,typescript",
+	// 	"prefix": "log",
+	// 	"body": [
+	// 		"console.log('$1');",
+	// 		"$2"
+	// 	],
+	// 	"description": "Log output to console"
+	// }
+	"Test method": {
+		"prefix": "tst",
+		"body": [
+			"test('$1', () => {",
+			"\t$0",
+			"})"
+		],
+		"description": "Test method template"
+	},
+	"Expect status": {
+		"prefix": "estatus",
+		"body": "expect(res.status).toBe(${1:200});",
+		"description": "Expect a defined status code"
+	},
+	"Expect body": {
+		"prefix": "ebody",
+		"body": "expect(res.body$1).toBe($2);",
+		"description": "Expect some value from body"
+	},
+	"Supertest request": {
+		"prefix": "reqtest",
+		"body": [
+			"return request(app).${1:get}(${2:MAIN_ROUTE})",
+			"\t.set('authorization', `bearer ${${3:user.token}}`)",
+			"\t.then(res => {",
+			"\t$0",
+			"\t})"
+		],
+		"description": "A default request using supertest"
+	}
+}
