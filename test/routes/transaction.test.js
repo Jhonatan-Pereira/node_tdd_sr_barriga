@@ -74,64 +74,38 @@ test('Transações de saída devem ser negativas', () => {
     })
 })
 
-test('Não deve inserir uma transação sem descrição', () => {
-  return request(app).post(MAIN_ROUTE)
-    .set('authorization', `bearer ${user.token}`)
-    .send({ date: new Date(), ammount: 100, type: 'O', acc_id: accUser.id })
-    .then(res => {
-      expect(res.status).toBe(400)
-      expect(res.body.error).toBe('description é um atributo obrigatório')
-    })
-})
+describe('Ao tentar inserir uma transação inválida', () => {
 
-test('Não deve inserir uma transação sem valor', () => {
-  return request(app).post(MAIN_ROUTE)
-    .set('authorization', `bearer ${user.token}`)
-    .send({ description: 'New T', date: new Date(), type: 'O', acc_id: accUser.id })
-    .then(res => {
-      expect(res.status).toBe(400)
-      expect(res.body.error).toBe('ammount é um atributo obrigatório')
-    })
-})
+  // const validTransaction = { description: 'New T', date: new Date(), ammount: 100, type: 'I', acc_id: accUser.id }
 
-test('Não deve inserir uma transação sem data', () => {
-  return request(app).post(MAIN_ROUTE)
-    .set('authorization', `bearer ${user.token}`)
-    .send({ description: 'New T', ammount: 100, type: 'O', acc_id: accUser.id })
-    .then(res => {
-      expect(res.status).toBe(400)
-      expect(res.body.error).toBe('date é um atributo obrigatório')
-    })
-})
+  let validTransaction;
+  beforeAll(() => {
+    validTransaction = { description: 'New T', date: new Date(), ammount: 100, type: 'I', acc_id: accUser.id }
+  })
 
-test('Não deve inserir uma transação sem conta', () => {
-  return request(app).post(MAIN_ROUTE)
-    .set('authorization', `bearer ${user.token}`)
-    .send({ description: 'New T', ammount: 100, type: 'O', date: new Date() })
-    .then(res => {
-      expect(res.status).toBe(400)
-      expect(res.body.error).toBe('acc_id é um atributo obrigatório')
-    })
-})
+  const testTemplate = (newData, errorMessage) => {
+    return request(app).post(MAIN_ROUTE)
+      .set('authorization', `bearer ${user.token}`)
+      .send({ ...validTransaction, ...newData })
+      .then(res => {
+        expect(res.status).toBe(400)
+        expect(res.body.error).toBe(errorMessage)
+      })
+  }
 
-test('Não deve inserir uma transação sem tipo', () => {
-  return request(app).post(MAIN_ROUTE)
-    .set('authorization', `bearer ${user.token}`)
-    .send({ description: 'New T', ammount: 100, date: new Date(), acc_id: accUser.id })
-    .then(res => {
-      expect(res.status).toBe(400)
-      expect(res.body.error).toBe('type é um atributo obrigatório')
-    })
-})
+  test('Não deve inserir sem descrição', () => testTemplate({description: null}, 'description é um atributo obrigatório'))
+  
+  test('Não deve inserir sem valor', () => testTemplate({ammount: null}, 'ammount é um atributo obrigatório'))
 
-test('Não deve inserir uma transação com tipo inválido', () => {
-  return request(app).post(MAIN_ROUTE)
-    .set('authorization', `bearer ${user.token}`)
-    .send({ description: 'New T', ammount: 100, type: 'A', date: new Date(), acc_id: accUser.id })
-    .then(res => {
-      expect(res.status).toBe(400)
-      expect(res.body.error).toBe('type é um atributo inválido')
-    })
+  test('Não deve inserir sem data', () => testTemplate({date: null}, 'date é um atributo obrigatório'))
+
+  test('Não deve inserir sem conta', () => testTemplate({acc_id: null}, 'acc_id é um atributo obrigatório'))
+
+  test('Não deve inserir sem tipo', () => testTemplate({type: null}, 'type é um atributo obrigatório'))
+
+  test('Não deve inserir sem tipo', () => testTemplate({type: null}, 'type é um atributo obrigatório'))
+  
+  test('Não deve inserir com tipo inválido', () => testTemplate({type: 'A'}, 'type é um atributo inválido'))
 })
 
 test('Deve retornar uma transação por ID', () => {
