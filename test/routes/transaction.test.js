@@ -74,6 +74,66 @@ test('Transações de saída devem ser negativas', () => {
     })
 })
 
+test('Não deve inserir uma transação sem descrição', () => {
+  return request(app).post(MAIN_ROUTE)
+    .set('authorization', `bearer ${user.token}`)
+    .send({ date: new Date(), ammount: 100, type: 'O', acc_id: accUser.id })
+    .then(res => {
+      expect(res.status).toBe(400)
+      expect(res.body.error).toBe('description é um atributo obrigatório')
+    })
+})
+
+test('Não deve inserir uma transação sem valor', () => {
+  return request(app).post(MAIN_ROUTE)
+    .set('authorization', `bearer ${user.token}`)
+    .send({ description: 'New T', date: new Date(), type: 'O', acc_id: accUser.id })
+    .then(res => {
+      expect(res.status).toBe(400)
+      expect(res.body.error).toBe('ammount é um atributo obrigatório')
+    })
+})
+
+test('Não deve inserir uma transação sem data', () => {
+  return request(app).post(MAIN_ROUTE)
+    .set('authorization', `bearer ${user.token}`)
+    .send({ description: 'New T', ammount: 100, type: 'O', acc_id: accUser.id })
+    .then(res => {
+      expect(res.status).toBe(400)
+      expect(res.body.error).toBe('date é um atributo obrigatório')
+    })
+})
+
+test('Não deve inserir uma transação sem conta', () => {
+  return request(app).post(MAIN_ROUTE)
+    .set('authorization', `bearer ${user.token}`)
+    .send({ description: 'New T', ammount: 100, type: 'O', date: new Date() })
+    .then(res => {
+      expect(res.status).toBe(400)
+      expect(res.body.error).toBe('acc_id é um atributo obrigatório')
+    })
+})
+
+test('Não deve inserir uma transação sem tipo', () => {
+  return request(app).post(MAIN_ROUTE)
+    .set('authorization', `bearer ${user.token}`)
+    .send({ description: 'New T', ammount: 100, date: new Date(), acc_id: accUser.id })
+    .then(res => {
+      expect(res.status).toBe(400)
+      expect(res.body.error).toBe('type é um atributo obrigatório')
+    })
+})
+
+test('Não deve inserir uma transação com tipo inválido', () => {
+  return request(app).post(MAIN_ROUTE)
+    .set('authorization', `bearer ${user.token}`)
+    .send({ description: 'New T', ammount: 100, type: 'A', date: new Date(), acc_id: accUser.id })
+    .then(res => {
+      expect(res.status).toBe(400)
+      expect(res.body.error).toBe('type é um atributo inválido')
+    })
+})
+
 test('Deve retornar uma transação por ID', () => {
   return app.db('transactions').insert(
     { description: 'T ID', date: new Date(), ammount: 100, type: 'I', acc_id: accUser.id }, ['id']

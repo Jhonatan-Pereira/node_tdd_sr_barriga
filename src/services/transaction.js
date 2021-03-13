@@ -1,3 +1,5 @@
+const ValidatorError = require('../errors/ValidatorError')
+
 module.exports = (app) => {
   const find = (userId, filter = {}) => {
     return app.db('transactions')
@@ -8,6 +10,13 @@ module.exports = (app) => {
   }
 
   const save = (transaction) => {
+
+    if(!transaction.description) throw new ValidatorError('description é um atributo obrigatório')
+    if(!transaction.ammount) throw new ValidatorError('ammount é um atributo obrigatório')
+    if(!transaction.date) throw new ValidatorError('date é um atributo obrigatório')
+    if(!transaction.acc_id) throw new ValidatorError('acc_id é um atributo obrigatório')
+    if(!transaction.type) throw new ValidatorError('type é um atributo obrigatório')
+    if(!['I','O'].includes(transaction.type)) throw new ValidatorError('type é um atributo inválido')
 
     const newTransaction = {...transaction}
 
