@@ -13,8 +13,7 @@ module.exports = (app) => {
       .first();
   }
 
-  const save = async (transfer) => {
-
+  const validate = async (transfer) => {
     if(!transfer.description) throw new ValidatorError('description é um atributo obrigatório')
     if(!transfer.ammount) throw new ValidatorError('ammount é um atributo obrigatório')
     if(!transfer.date) throw new ValidatorError('date é um atributo obrigatório')
@@ -26,6 +25,11 @@ module.exports = (app) => {
     accounts.forEach(acc => {
       if(acc.user_id !== parseInt(transfer.user_id, 10)) throw new ValidatorError(`Conta #${acc.id} não pertence ao usuário`)
     })
+  }
+
+  const save = async (transfer) => {
+
+    await validate(transfer)
     
     const result = await app.db('transfers').insert(transfer, '*')
     const transferId = result[0].id
@@ -55,6 +59,9 @@ module.exports = (app) => {
   }
 
   const update = async(id, transfer) => {
+
+    await validate(transfer)
+
     const result = await app.db('transfers')
       .where({ id })
       .update(transfer, '*')
