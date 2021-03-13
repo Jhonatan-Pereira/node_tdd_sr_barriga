@@ -25,12 +25,12 @@
 		"description": "Test method template"
 	},
 	"Expect status": {
-		"prefix": "estatus",
+		"prefix": "expstatus",
 		"body": "expect(res.status).toBe(${1:200});",
 		"description": "Expect a defined status code"
 	},
 	"Expect body": {
-		"prefix": "ebody",
+		"prefix": "expbody",
 		"body": "expect(res.body$1).toBe($2);",
 		"description": "Expect some value from body"
 	},
@@ -44,5 +44,14 @@
 			"\t})"
 		],
 		"description": "A default request using supertest"
+	},
+	"Router method": {
+		"prefix": "routertest",
+		"body": [
+			"router.${1:get}('${2:/}', (req, res, next) => {",
+			"\t$0",
+			"})"
+		],
+		"description": "A default router method"
 	}
 }

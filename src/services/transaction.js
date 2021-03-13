@@ -12,5 +12,11 @@ module.exports = (app) => {
       .insert(transaction, '*')
   }
 
-  return { find, save }
+  const findOne = (filter) => {
+    return app.db('transactions')
+      .where(filter)
+      .first()
+  }
+
+  return { find, save, findOne }
 }
