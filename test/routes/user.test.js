@@ -1,15 +1,15 @@
-const request = require('supertest')
-const jwt = require('jwt-simple')
+const request = require('supertest');
+const jwt = require('jwt-simple');
 
 const app = require('../../src/app')
 
-const mail = `${Date.now()}@mail.com`
+const mail = `jhonatan.pereira@mail.com`
 
 const MAIN_ROUTE = '/v1/users';
 let user;
 
 beforeAll(async () => {
-  const res = await app.services.user.save({ name: 'User Account', mail: `${Date.now()}@mail.com`, passwd: '123456' })
+  const res = await app.services.user.save({ name: 'User Account', mail: `user.acount@mail.com`, passwd: '123456' })
   user = { ...res[0] }
   user.token = jwt.encode(user, 'Segredo!')
 })
@@ -37,7 +37,7 @@ test('Deve inserir usuário com sucesso', () => {
 
 test('Deve armazenar senha criptografada', async () => {
   const res = await request(app).post(MAIN_ROUTE)
-    .send({ name: 'Walter Mitty', mail: `${Date.now()}@mail.com`, passwd: '12345' })
+    .send({ name: 'Walter Mitty', mail: `walter.mitty@mail.com`, passwd: '12345' })
     .set('authorization', `bearer ${user.token}`)
 
   expect(res.status).toBe(201)

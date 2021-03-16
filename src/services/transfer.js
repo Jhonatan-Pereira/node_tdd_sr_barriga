@@ -39,7 +39,8 @@ module.exports = (app) => {
         ammount: transfer.ammount * -1, 
         type: 'O',
         acc_id: transfer.acc_ori_id,
-        transfer_id: transferId  
+        transfer_id: transferId,
+        status: true 
       },
       { 
         description: `Transfer from acc #${transfer.acc_ori_id}`, 
@@ -47,7 +48,8 @@ module.exports = (app) => {
         ammount: transfer.ammount, 
         type: 'I',
         acc_id: transfer.acc_dest_id,
-        transfer_id: transferId  
+        transfer_id: transferId,
+        status: true  
       },
     ]
 
@@ -69,7 +71,8 @@ module.exports = (app) => {
         ammount: transfer.ammount * -1, 
         type: 'O',
         acc_id: transfer.acc_ori_id,
-        transfer_id: id  
+        transfer_id: id,
+        status: true
       },
       { 
         description: `Transfer from acc #${transfer.acc_ori_id}`, 
@@ -77,7 +80,8 @@ module.exports = (app) => {
         ammount: transfer.ammount, 
         type: 'I',
         acc_id: transfer.acc_dest_id,
-        transfer_id: id  
+        transfer_id: id,
+        status: true
       },
     ]
 

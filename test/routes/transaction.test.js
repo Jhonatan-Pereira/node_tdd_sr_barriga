@@ -10,6 +10,7 @@ let accUser2;
 
 beforeAll(async () => {
   await app.db('transactions').del();
+  await app.db('transfers').del();
   await app.db('accounts').del();
   await app.db('users').del();
   const users = await app.db('users').insert([
@@ -28,8 +29,8 @@ beforeAll(async () => {
 
 test('Deve listar apenas as transações do usuário', () => {
   return app.db('transactions').insert([
-    { description: 'T1', date: new Date(), ammount: 100, type: 'I', acc_id: accUser.id },
-    { description: 'T2', date: new Date(), ammount: 300, type: 'O', acc_id: accUser2.id },
+    { description: 'T1', date: '2021-03-15', ammount: 100, type: 'I', acc_id: accUser.id },
+    { description: 'T2', date: '2021-03-15', ammount: 300, type: 'O', acc_id: accUser2.id },
   ]).then(() => {
     return request(app).get(MAIN_ROUTE)
       .set('authorization', `bearer ${user.token}`)
@@ -44,7 +45,7 @@ test('Deve listar apenas as transações do usuário', () => {
 test('Deve inserir uma transação com sucesso', () => {
   return request(app).post(MAIN_ROUTE)
     .set('authorization', `bearer ${user.token}`)
-    .send({ description: 'New T', date: new Date(), ammount: 100, type: 'I', acc_id: accUser.id })
+    .send({ description: 'New T', date: '2021-03-15', ammount: 100, type: 'I', acc_id: accUser.id })
     .then(res => {
       expect(res.status).toBe(201);
       expect(res.body.acc_id).toBe(accUser.id);
@@ -55,7 +56,7 @@ test('Deve inserir uma transação com sucesso', () => {
 test('Transações de entrada devem ser positivas', () => {
   return request(app).post(MAIN_ROUTE)
     .set('authorization', `bearer ${user.token}`)
-    .send({ description: 'New T', date: new Date(), ammount: -100, type: 'I', acc_id: accUser.id })
+    .send({ description: 'New T', date: '2021-03-15', ammount: -100, type: 'I', acc_id: accUser.id })
     .then(res => {
       expect(res.status).toBe(201);
       expect(res.body.acc_id).toBe(accUser.id);
@@ -66,7 +67,7 @@ test('Transações de entrada devem ser positivas', () => {
 test('Transações de saída devem ser negativas', () => {
   return request(app).post(MAIN_ROUTE)
     .set('authorization', `bearer ${user.token}`)
-    .send({ description: 'New T', date: new Date(), ammount: 100, type: 'O', acc_id: accUser.id })
+    .send({ description: 'New T', date: '2021-03-15', ammount: 100, type: 'O', acc_id: accUser.id })
     .then(res => {
       expect(res.status).toBe(201);
       expect(res.body.acc_id).toBe(accUser.id);
@@ -76,11 +77,11 @@ test('Transações de saída devem ser negativas', () => {
 
 describe('Ao tentar inserir uma transação inválida', () => {
 
-  // const validTransaction = { description: 'New T', date: new Date(), ammount: 100, type: 'I', acc_id: accUser.id }
+  // const validTransaction = { description: 'New T', date: '2021-03-15', ammount: 100, type: 'I', acc_id: accUser.id }
 
   let validTransaction;
   beforeAll(() => {
-    validTransaction = { description: 'New T', date: new Date(), ammount: 100, type: 'I', acc_id: accUser.id }
+    validTransaction = { description: 'New T', date: '2021-03-15', ammount: 100, type: 'I', acc_id: accUser.id }
   })
 
   const testTemplate = (newData, errorMessage) => {
@@ -110,7 +111,7 @@ describe('Ao tentar inserir uma transação inválida', () => {
 
 test('Deve retornar uma transação por ID', () => {
   return app.db('transactions').insert(
-    { description: 'T ID', date: new Date(), ammount: 100, type: 'I', acc_id: accUser.id }, ['id']
+    { description: 'T ID', date: '2021-03-15', ammount: 100, type: 'I', acc_id: accUser.id }, ['id']
   ).then(trans => request(app).get(`${MAIN_ROUTE}/${trans[0].id}`)
     .set('authorization', `bearer ${user.token}`)
     .then(res => {
@@ -122,7 +123,7 @@ test('Deve retornar uma transação por ID', () => {
 
 test('Deve alterar uma transação', () => {
   return app.db('transactions').insert(
-    { description: 'to update', date: new Date(), ammount: 100, type: 'I', acc_id: accUser.id }, ['id']
+    { description: 'to update', date: '2021-03-15', ammount: 100, type: 'I', acc_id: accUser.id }, ['id']
   ).then(trans => request(app).put(`${MAIN_ROUTE}/${trans[0].id}`)
     .set('authorization', `bearer ${user.token}`)
     .send({ description: 'updated' })
@@ -134,7 +135,7 @@ test('Deve alterar uma transação', () => {
 
 test('Deve remover uma transação', () => {
   return app.db('transactions').insert(
-    { description: 'To delete', date: new Date(), ammount: 100, type: 'I', acc_id: accUser.id }, ['id']
+    { description: 'To delete', date: '2021-03-15', ammount: 100, type: 'I', acc_id: accUser.id }, ['id']
   ).then(trans => request(app).delete(`${MAIN_ROUTE}/${trans[0].id}`)
     .set('authorization', `bearer ${user.token}`)
     .then(res => {
@@ -144,7 +145,7 @@ test('Deve remover uma transação', () => {
 
 test('Não deve remover uma transação de outro usuário', () => {
   return app.db('transactions').insert(
-    { description: 'To delete', date: new Date(), ammount: 100, type: 'I', acc_id: accUser2.id }, ['id']
+    { description: 'To delete', date: '2021-03-15', ammount: 100, type: 'I', acc_id: accUser2.id }, ['id']
   ).then(trans => request(app).delete(`${MAIN_ROUTE}/${trans[0].id}`)
     .set('authorization', `bearer ${user.token}`)
     .then(res => {
@@ -155,7 +156,7 @@ test('Não deve remover uma transação de outro usuário', () => {
 
 test('Não deve remover conta com transação', () => {
   return app.db('transactions').insert(
-    { description: 'To delete', date: new Date(), ammount: 100, type: 'I', acc_id: accUser.id }, ['id']
+    { description: 'To delete', date: '2021-03-15', ammount: 100, type: 'I', acc_id: accUser.id }, ['id']
   ).then(() => request(app).delete(`/v1/accounts/${accUser.id}`)
     .set('authorization', `bearer ${user.token}`)
     .then(res => {

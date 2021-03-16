@@ -23,7 +23,7 @@ test('Deve listar apenas as transferências do usuário', () => {
 test.skip('Deve inserir uma transferência com sucesso', () => {
   return request(app).post(MAIN_ROUTE)
     .set('authorization', `bearer ${TOKEN}`)
-    .send({ description: 'Regular transfer', user_id: 10000, acc_ori_id: 10000, acc_dest_id: 10001, ammount: 100, date: new Date() })
+    .send({ description: 'Regular transfer', user_id: 10000, acc_ori_id: 10000, acc_dest_id: 10001, ammount: 100, date: '2021-03-15' })
     .then(async (res) => {
       expect(res.status).toBe(201);
       expect(res.body.description).toBe('Regular transfer');
@@ -47,7 +47,7 @@ describe('Ao salvar uma transferência válida...', () => {
   test('Deve retornar o status 201 e os dados da transferência', () => {
     return request(app).post(MAIN_ROUTE)
     .set('authorization', `bearer ${TOKEN}`)
-    .send({ description: 'Regular transfer', user_id: 10000, acc_ori_id: 10000, acc_dest_id: 10001, ammount: 100, date: new Date() })
+    .send({ description: 'Regular transfer', user_id: 10000, acc_ori_id: 10000, acc_dest_id: 10001, ammount: 100, date: '2021-03-15' })
     .then(async (res) => {
       expect(res.status).toBe(201);
       expect(res.body.description).toBe('Regular transfer');
@@ -83,7 +83,7 @@ describe('Ao salvar uma transferência válida...', () => {
 
 describe('Ao tentar salvar uma transferência inválida', () => {
 
-  const validTransfer = { description: 'Regular transfer', user_id: 10000, acc_ori_id: 10000, acc_dest_id: 10001, ammount: 100, date: new Date() }
+  const validTransfer = { description: 'Regular transfer', user_id: 10000, acc_ori_id: 10000, acc_dest_id: 10001, ammount: 100, date: '2021-03-15' }
 
   const template = (newData, errorMessage) => {
     return request(app).post(MAIN_ROUTE)
@@ -121,7 +121,7 @@ describe('Ao alterar uma transferência válida...', () => {
   test('Deve retornar o status 200 e os dados da transferência', () => {
     return request(app).put(`${MAIN_ROUTE}/10000`)
     .set('authorization', `bearer ${TOKEN}`)
-    .send({ description: 'Transfer update', user_id: 10000, acc_ori_id: 10000, acc_dest_id: 10001, ammount: 500, date: new Date() })
+    .send({ description: 'Transfer update', user_id: 10000, acc_ori_id: 10000, acc_dest_id: 10001, ammount: 500, date: '2021-03-15' })
     .then(async (res) => {
       expect(res.status).toBe(200);
       expect(res.body.description).toBe('Transfer update');
@@ -154,11 +154,16 @@ describe('Ao alterar uma transferência válida...', () => {
     expect(outcome.transfer_id).toBe(transferId);
     expect(income.transfer_id).toBe(transferId);
   })
+
+  test('Ambas devem estar com status de realizadas', () => {
+    expect(outcome.status).toBe(true);
+    expect(income.status).toBe(true);
+  })
 })
 
 describe('Ao tentar alterar uma transferência inválida', () => {
 
-  const validTransfer = { description: 'Regular transfer', user_id: 10000, acc_ori_id: 10000, acc_dest_id: 10001, ammount: 100, date: new Date() }
+  const validTransfer = { description: 'Regular transfer', user_id: 10000, acc_ori_id: 10000, acc_dest_id: 10001, ammount: 100, date: '2021-03-15' }
 
   const template = (newData, errorMessage) => {
     return request(app).put(`${MAIN_ROUTE}/10000`)
