@@ -14,10 +14,6 @@ consign({ cwd: 'src', verbose: false })
   .then('./config/router.js')
   .into(app)
 
-app.get('/', (req, res) => {
-  res.status(200).send()
-})
-
 app.use((err, req, res, next) => {
   const { name, message, stack } = err
   if(name === 'ValidatorError') res.status(400).json({ error: message })
